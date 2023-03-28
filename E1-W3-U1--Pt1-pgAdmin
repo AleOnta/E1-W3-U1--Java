@@ -1,0 +1,70 @@
+CREATE TABLE clients (
+	id_client serial NOT NULL PRIMARY KEY,
+	firstname VARCHAR NOT NULL,
+	lastname VARCHAR NOT NULL,
+	birthdate DATE NOT NULL,
+	residential_region VARCHAR NOT NULL
+)
+
+CREATE TABLE suppliers (
+	id_supplier serial NOT NULL PRIMARY KEY,
+	name VARCHAR NOT NULL,
+	region VARCHAR NOT NULL
+)
+
+CREATE TABLE invoices (
+	invoices_id serial NOT NULL PRIMARY KEY,
+	type VARCHAR NOT NULL,
+	amount DECIMAL NOT NULL,
+	vat VARCHAR NOT NULL DEFAULT '20%',
+	client_id INT8 NOT NULL,
+	invoice_date DATE NOT NULL,
+	number_supplier INT8 NOT NULL,
+	CONSTRAINT client_id_FK FOREIGN KEY (client_id) REFERENCES clients (id_client)
+	ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT number_supplier_FK FOREIGN KEY (number_supplier) REFERENCES suppliers (id_supplier)
+	ON DELETE CASCADE ON UPDATE CASCADE
+)
+
+CREATE TABLE products (
+	id_product serial NOT NULL PRIMARY KEY,
+	description VARCHAR NOT NULL,
+	in_sale BOOLEAN NOT NULL,
+	activation_date DATE,
+	deactivation_date DATE 
+)
+
+SELECT * FROM clients;
+
+/* DML Instructions */
+/* CLIENTS */
+INSERT INTO clients(firstname, lastname, birthdate, residential_region) VALUES ('Alessandro', 'Ontani', '1999-01-11', 'Lombardia');
+INSERT INTO clients(firstname, lastname, birthdate, residential_region) VALUES ('Saverio', 'Caracappa', '1995-06-21', 'Puglia');
+INSERT INTO clients(firstname, lastname, birthdate, residential_region) VALUES ('Francesca', 'Derini', '1990-02-12', 'Basilicata');
+INSERT INTO clients(firstname, lastname, birthdate, residential_region) VALUES ('Ivan', 'Locisco', '1982-12-30', 'Emilia-Romagna');
+
+/* SUPPLIER */
+INSERT INTO suppliers(name, region) VALUES ('Caprini srl', 'Lombardia');
+INSERT INTO suppliers(name, region) VALUES ('Framor spa', 'Piemonte');
+INSERT INTO suppliers(name, region) VALUES ('Gentili snc', 'Sicilia');
+INSERT INTO suppliers(name, region) VALUES ('Sintirini spa', 'Puglia');
+
+/* INVOICES */
+INSERT INTO invoices(type, amount, vat, client_id, invoice_date, number_supplier) VALUES ('purchase', 38.15, '4%', 3, '2022-02-15', 2);
+INSERT INTO invoices(type, amount, vat, client_id, invoice_date, number_supplier) VALUES ('sale', 99.48, '20%', 1, '2021-08-25', 4);
+INSERT INTO invoices(type, amount, vat, client_id, invoice_date, number_supplier) VALUES ('sale', 724.56, '20%', 4, '2023-01-18', 1);
+INSERT INTO invoices(type, amount, vat, client_id, invoice_date, number_supplier) VALUES ('sale', 724.56, '20%', 3, '2021-01-30', 2);
+INSERT INTO invoices(type, amount, vat, client_id, invoice_date, number_supplier) VALUES ('purchase', 334.20, '11%', 2, '2019-05-13', 3);
+
+/* PRODUCTS */
+INSERT INTO products(description, in_sale, activation_date) VALUES ('Coca-cola', true, '1880-08-19');
+INSERT INTO products(description, in_sale) VALUES ('Nvidia RTFXG 7090', false);
+INSERT INTO products(description, in_sale, activation_date) VALUES ('Iphone 13', true, '2021-06-30');
+INSERT INTO products(description, in_sale, activation_date) VALUES ('Ray-Ban', true, '2017-12-01');
+
+/* DQL Instructions */
+SELECT firstname, lastname FROM clients WHERE EXTRACT(YEAR FROM birthdate) = '1982';
+SELECT COUNT(*) FROM invoices WHERE vat = '20%';
+SELECT invoices_id, amount, invoice_date FROM invoices;
+SELECT * FROM products WHERE EXTRACT(YEAR FROM activation_date) = '2017' AND in_sale = true;
+SELECT invoice_date FROM invoices WHERE 
