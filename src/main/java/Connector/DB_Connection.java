@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class DB_Connection {
@@ -52,8 +52,13 @@ public class DB_Connection {
         st.executeUpdate(sql);
     }
 
-    public void updateStudent(int id, HashMap<String, Object> s) {
-
+    public void updateStudent(int id, Map<String, Student> s) throws SQLException {
+        Student toUse = s.get(String.valueOf(id));
+        String sql = "UPDATE school_students SET name='"+toUse.getName()+"', lastname='"+toUse.getLastname()+"', " +
+                "gender='"+toUse.getGender()+"', birthdate='"+toUse.getBirthdate()+"', avg="+toUse.getAvg() + ", "
+                +"min_vote="+toUse.getMin_vote()+", max_vote="+toUse.getMax_vote()+" WHERE student_id ="+ id;
+        st.executeUpdate(sql);
+        log.info("Student correctly updated.");
     }
 
     public boolean checkId(int id) throws SQLException {
